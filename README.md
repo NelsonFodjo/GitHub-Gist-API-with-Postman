@@ -24,59 +24,6 @@ GitHub's REST API does not expose a `/login` endpoint. Authentication is done by
 
 ---
 
-### Data Retrieval (GET)
-
-**List all gists**
-| Field | Value |
-|---|---|
-| URL | `/gists` |
-| Method | GET |
-| Headers | `Authorization: Bearer <token>` |
-| Body | None |
-
-**Get a single gist**
-| Field | Value |
-|---|---|
-| URL | `/gists/{gist_id}` |
-| Method | GET |
-| Headers | `Authorization: Bearer <token>` |
-| Body | None |
-
----
-
-### Data Creation (POST)
-| Field | Value |
-|---|---|
-| URL | `/gists` |
-| Method | POST |
-| Headers | `Authorization: Bearer <token>`, `Content-Type: application/json` |
-| Body format | JSON with `description` (string), `public` (boolean), `files` (object keyed by filename, each with a `content` string) |
-
----
-
-### Data Update (PATCH)
-GitHub implements updates via **PATCH**, not PUT — there is no PUT method for editing gist content.
-
-| Field | Value |
-|---|---|
-| URL | `/gists/{gist_id}` |
-| Method | PATCH |
-| Headers | `Authorization: Bearer <token>`, `Content-Type: application/json` |
-| Body format | JSON with `description` and/or `files`, same shape as creation |
-
----
-
-### Data Deletion (DELETE)
-| Field | Value |
-|---|---|
-| URL | `/gists/{gist_id}` |
-| Method | DELETE |
-| Headers | `Authorization: Bearer <token>` |
-| Body | None |
-| Note | Success returns `204 No Content`, empty body |
-
----
-
 ### Summary Table
 
 | Operation | Method | URL | Headers | Body | Success Status |
@@ -92,11 +39,11 @@ GitHub implements updates via **PATCH**, not PUT — there is no PUT method for 
 
 ## 3. Authentication
 
-**Method used:** Token-based authentication (Personal Access Token, sent as a Bearer token) — the API key pattern described in the assignment brief. OAuth2 was unnecessary for single-user testing, and Basic Auth (username/password) is deprecated for GitHub's API.
+**Method used:** Token-based authentication (Personal Access Token).
 
 **Token generation:** Generated manually via GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic), scoped to `gist`. GitHub does not issue tokens through an API call.
 
-<screenshot> — PAT generation page (blur the token value)
+![Generate your Personal Access Token](screenshots/pat.png)
 
 **Authentication request:** In place of a login endpoint, `GET /user` demonstrates that the token authenticates successfully.
 
@@ -109,7 +56,7 @@ GitHub implements updates via **PATCH**, not PUT — there is no PUT method for 
 
 **Token/session received:** GitHub does not return a session object — the PAT is the standing credential. A 200 response from `/user` confirms it is valid.
 
-<screenshot> — GET /user request and 200 response
+![GET /user request and 200 response](screenshots/authcheck.png)
 
 **Token storage:**
 
@@ -121,8 +68,11 @@ GitHub implements updates via **PATCH**, not PUT — there is no PUT method for 
 
 Setting Bearer auth once at the collection level means every request automatically authenticates without repeating the token, satisfying the "store the token for subsequent requests" requirement of the brief.
 
-<screenshot> — Collection Authorization tab showing Bearer Token = {{token}}
-<screenshot> — Environment variables panel (token value masked/secret)
+
+![Collection Authorization tab showing Bearer Token = {{token}}](screenshots/collect.png)
+
+![Environment variables panel (token value masked/secret)](screenshots/env.png)
+
 
 ---
 
@@ -131,23 +81,9 @@ Setting Bearer auth once at the collection level means every request automatical
 ### GET – Retrieve all gists
 Request: `GET https://api.github.com/gists`, header `Authorization: Bearer {{token}}`
 
-Example response (200 OK):
-```json
-[
-  {
-    "id": "aa5a315d61ae9438b18d",
-    "description": "Test gist from Postman assignment",
-    "public": true,
-    "files": {
-      "test.md": { "filename": "test.md", "type": "text/markdown", "size": 45 }
-    },
-    "created_at": "2026-09-05T10:12:00Z",
-    "updated_at": "2026-09-05T10:12:00Z"
-  }
-]
-```
 
 <screenshot> — GET /gists request and 200 response
+![Environment](screenshots/env.png)
 
 ### GET – Retrieve a specific gist
 Request: `GET https://api.github.com/gists/{{gist_id}}`
@@ -155,6 +91,7 @@ Request: `GET https://api.github.com/gists/{{gist_id}}`
 Returns the same object shape with full file `content` included.
 
 <screenshot> — GET /gists/{{gist_id}} request and 200 response
+![Environment](screenshots/env.png)
 
 ### POST – Create new gist
 Request: `POST https://api.github.com/gists`, header `Content-Type: application/json`
@@ -192,7 +129,9 @@ Example response (201 Created):
 The returned `id` is captured into the `gist_id` environment variable for use in subsequent requests.
 
 <screenshot> — POST /gists request, body, and 201 response
+![Environment](screenshots/env.png)
 <screenshot> — Environment panel showing gist_id populated in Current Value after Create
+![Environment](screenshots/env.png)
 
 ### PATCH – Update existing gist
 Request: `PATCH https://api.github.com/gists/{{gist_id}}`, header `Content-Type: application/json`
@@ -225,6 +164,7 @@ Example response (200 OK):
 ```
 
 <screenshot> — PATCH request, body, and 200 response
+![Environment](screenshots/env.png)
 
 ### DELETE – Remove gist
 Request: `DELETE https://api.github.com/gists/{{gist_id}}`
@@ -232,6 +172,7 @@ Request: `DELETE https://api.github.com/gists/{{gist_id}}`
 Response: `204 No Content`, empty body, confirming deletion.
 
 <screenshot> — DELETE request and 204 response
+![Environment](screenshots/env.png)
 
 ---
 
