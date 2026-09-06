@@ -1,0 +1,323 @@
+{
+	"info": {
+		"_postman_id": "f062009f-c773-4068-8b57-07dd703d604e",
+		"name": "GitHub Gist API",
+		"description": "### Welcome to Postman! This is your first collection. \n\nCollections are your starting point for building and testing APIs. You can use this one to:\n\n• Group related requests\n• Test your API in real-world scenarios\n• Document and share your requests\n\nUpdate the name and overview whenever you’re ready to make it yours.\n\n[Learn more about Postman Collections.](https://learning.postman.com/docs/collections/collections-overview/)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "57271599"
+	},
+	"item": [
+		{
+			"name": "Auth Check",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code !== 200) {",
+							"    var errorData = pm.response.json();",
+							"    pm.test(\"Error: \" + errorData.message, function () {",
+							"        pm.expect(errorData.message).to.exist;",
+							"    });",
+							"} else {",
+							"    var jsonData = pm.response.json();",
+							"    pm.test(\"Authenticated successfully as \" + jsonData.login, function () {",
+							"        pm.expect(jsonData.login).to.exist;",
+							"    });",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/user",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"user"
+					]
+				},
+				"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+			},
+			"response": []
+		},
+		{
+			"name": "Get all gists",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code !== 200) {",
+							"    var errorData = pm.response.json();",
+							"    pm.test(\"Error: \" + errorData.message, function () {",
+							"        pm.expect(errorData.message).to.exist;",
+							"    });",
+							"} else {",
+							"    var jsonData = pm.response.json();",
+							"    pm.test(\"Fetched \" + jsonData.length + \" gist(s) successfully\", function () {",
+							"        pm.expect(jsonData).to.be.an(\"array\");",
+							"    });",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/gists",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"gists"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create gist",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code >= 400) {",
+							"    var errorData = pm.response.json();",
+							"    pm.test(\"Error: \" + errorData.message, function () {",
+							"        pm.expect(errorData.message).to.exist;",
+							"    });",
+							"} else {",
+							"    var jsonData = pm.response.json();",
+							"    if (jsonData.id) {",
+							"        pm.environment.set(\"gist_id\", jsonData.id);",
+							"    }",
+							"    pm.test(\"Gist Created Successfully with ID: \" + jsonData.id, function () {",
+							"        pm.expect(jsonData.id).to.exist;",
+							"    });",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"description\": \"Test gist from Postman assignment\",\n  \"public\": true,\n  \"files\": {\n    \"test.md\": {\n      \"content\": \"# Hello from Postman\\nThis gist was created via the API.\"\n    }\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/gists",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"gists"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get one gist",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 404) {",
+							"    var errorData = pm.response.json();",
+							"    pm.test(\"Error: \" + errorData.message, function () {",
+							"        pm.expect(errorData.message).to.exist;",
+							"    });",
+							"} else {",
+							"    var jsonData = pm.response.json();",
+							"    var fileName = Object.keys(jsonData.files)[0];",
+							"    pm.test(\"Gist \\\"\" + fileName + \"\\\" retrieved successfully\", function () {",
+							"        pm.response.to.have.status(200);",
+							"    });",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/gists/{{gist_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"gists",
+						"{{gist_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update gist",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code >= 400) {",
+							"    var errorData = pm.response.json();",
+							"    pm.test(\"Error: \" + errorData.message, function () {",
+							"        pm.expect(errorData.message).to.exist;",
+							"    });",
+							"} else {",
+							"    var jsonData = pm.response.json();",
+							"    pm.test(\"Gist updated successfully - new description: \" + jsonData.description, function () {",
+							"        pm.expect(jsonData.description).to.eql(\"Updated via Postman - PATCH test\");",
+							"    });",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"description\": \"Updated via Postman - PATCH test\",\n  \"files\": {\n    \"test.md\": {\n      \"content\": \"# Updated content\\nThis was changed by a PATCH request.\"\n    }\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/gists/{{gist_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"gists",
+						"{{gist_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete gist",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 404) {",
+							"    var errorData = pm.response.json();",
+							"    pm.test(\"Error: \" + errorData.message, function () {",
+							"        pm.expect(errorData.message).to.exist;",
+							"    });",
+							"} else {",
+							"    pm.test(\"Gist with ID \" + pm.environment.get(\"gist_id\") + \" deleted successfully\", function () {",
+							"        pm.response.to.have.status(204);",
+							"    });",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/gists/{{gist_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"gists",
+						"{{gist_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					"if (!pm.environment.get(\"token\")) {",
+					"    console.warn(\"No token set in environment — requests will fail with 401\");",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

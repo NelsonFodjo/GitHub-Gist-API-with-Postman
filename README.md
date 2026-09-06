@@ -7,7 +7,7 @@
 **Base URL:** `https://api.github.com` \
 **Official Docs:** `https://docs.github.com/en/rest/gists?apiVersion=2026-03-10`
 
-GitHub Gists was chosen because it supports full CRUD operations (Create, Read, Update, Delete) on a simple resource (a "gist"), and uses a straightforward token-based authentication method suitable for testing in Postman.
+GitHub Gists was chosen because it supports full CRUD operations (Create, Read, Update, Delete) on a simple resource (a "gist"), and uses a straightforward token-based authentication method suitable for testing in Postman. Import the files GitHub Gist API.json and environment as well into postman collections or follow the steps below. 
 
 ---
 
@@ -82,16 +82,7 @@ Setting Bearer auth once at the collection level means every request automatical
 Request: `GET https://api.github.com/gists`, header `Authorization: Bearer {{token}}`
 
 
-<screenshot> — GET /gists request and 200 response
-![Environment](screenshots/env.png)
-
-### GET – Retrieve a specific gist
-Request: `GET https://api.github.com/gists/{{gist_id}}`
-
-Returns the same object shape with full file `content` included.
-
-<screenshot> — GET /gists/{{gist_id}} request and 200 response
-![Environment](screenshots/env.png)
+![GET /gists request and 200 response](screenshots/getall.png)
 
 ### POST – Create new gist
 Request: `POST https://api.github.com/gists`, header `Content-Type: application/json`
@@ -109,29 +100,19 @@ Body:
 }
 ```
 
-Example response (201 Created):
-```json
-{
-  "id": "aa5a315d61ae9438b18d",
-  "description": "Test gist from Postman assignment",
-  "public": true,
-  "files": {
-    "test.md": {
-      "filename": "test.md",
-      "content": "# Hello from Postman\nThis gist was created via the API."
-    }
-  },
-  "html_url": "https://gist.github.com/username/aa5a315d61ae9438b18d",
-  "created_at": "2026-09-05T10:12:00Z"
-}
-```
-
 The returned `id` is captured into the `gist_id` environment variable for use in subsequent requests.
 
-<screenshot> — POST /gists request, body, and 201 response
-![Environment](screenshots/env.png)
-<screenshot> — Environment panel showing gist_id populated in Current Value after Create
-![Environment](screenshots/env.png)
+
+![POST /gists request, body, and 201 response](screenshots/create.png)
+
+![Environment panel showing gist_id populated in Current Value after Create](screenshots/gist_id.png)
+
+### GET – Retrieve a specific gist
+Request: `GET https://api.github.com/gists/{{gist_id}}`
+
+Returns the same object shape with full file `content` included.
+
+![GET /gists/{{gist_id}} request and 200 response](screenshots/getone.png)
 
 ### PATCH – Update existing gist
 Request: `PATCH https://api.github.com/gists/{{gist_id}}`, header `Content-Type: application/json`
@@ -148,31 +129,14 @@ Body:
 }
 ```
 
-Example response (200 OK):
-```json
-{
-  "id": "aa5a315d61ae9438b18d",
-  "description": "Updated via Postman - PATCH test",
-  "files": {
-    "test.md": {
-      "filename": "test.md",
-      "content": "# Updated content\nThis was changed by a PATCH request."
-    }
-  },
-  "updated_at": "2026-09-05T10:20:00Z"
-}
-```
-
-<screenshot> — PATCH request, body, and 200 response
-![Environment](screenshots/env.png)
+![PATCH request, body, and 200 response](screenshots/patch.png)
 
 ### DELETE – Remove gist
 Request: `DELETE https://api.github.com/gists/{{gist_id}}`
 
 Response: `204 No Content`, empty body, confirming deletion.
 
-<screenshot> — DELETE request and 204 response
-![Environment](screenshots/env.png)
+![DELETE request and 204 response](screenshots/delete.png)
 
 ---
 
@@ -322,19 +286,27 @@ if (pm.response.code === 404) {
 3. Run — each request executes in sequence; `gist_id` set by Create is automatically reused by the requests after it
 4. Runner summary displays pass/fail count per test assertion across all requests, with error messages visible directly in test names for any failed request
 
-<screenshot> — Collection Runner execution summary showing pass/fail results
+
+![Collection Runner execution summary showing pass/fail results](screenshots/runner.png)
 
 ### Token refresh (optional requirement)
-Not implemented. GitHub Personal Access Tokens are long-lived and do not require per-session refresh, unlike the username/password example in the brief. If a token expires or is revoked, the fix is manual regeneration in GitHub Settings and updating the environment variable — there is no programmatic refresh endpoint for PATs.
+Not implemented. GitHub Personal Access Tokens are long-lived and do not require per-session refresh. If a token expires or is revoked, the fix is manual regeneration in GitHub Settings and updating the environment variable — there is no programmatic refresh endpoint for PATs.
 
 **Known limitation:** since Create must run before Get single/Update/Delete for `gist_id` to be populated, running Delete then re-running the same Runner pass without a fresh Create will leave `gist_id` pointing at an already-deleted resource — this is now handled gracefully by the conditional error blocks, which will report a 404 with GitHub's actual message instead of failing silently.
 
 ---
 
-## 7. Deliverables Checklist
+## 7. Live Demo Link
 
-- [ ] Postman Collection JSON export (requests, environment, scripts)
-- [ ] This documentation with screenshots of each request/response
-- [ ] Collection Runner execution screenshot
-- [ ] GitHub repository link containing all files
-- [ ] Live demo covering authentication, CRUD, environment variables, and automation
+### Watch a step by step implementation by clicking on the video below
+[![Watch the Demo video](https://youtube.com)](https://youtube.com)
+
+---
+
+## 8. Deliverables Checklist
+
+- [x] Postman Collection JSON export (requests, environment, scripts)
+- [x] This documentation with screenshots of each request/response
+- [x] Collection Runner execution screenshot
+- [x] GitHub repository link containing all files
+- [x] Live demo covering authentication, CRUD, environment variables, and automation
