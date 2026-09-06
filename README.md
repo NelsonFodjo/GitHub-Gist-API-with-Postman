@@ -299,7 +299,7 @@ Not implemented. GitHub Personal Access Tokens are long-lived and do not require
 ## 7. Live Demo Link
 
 ### Watch a step by step implementation by clicking on the video below
-[![Watch the Demo video](https://youtube.com)](https://youtube.com)
+[![Watch the Demo video](https://youtu.be/UKlhZ8_45rY)](https://youtu.be/UKlhZ8_45rY)
 
 ---
 
